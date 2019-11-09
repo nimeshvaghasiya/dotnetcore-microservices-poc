@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:2.1-sdk AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
 WORKDIR /src
 
 COPY PricingService.Api/*.csproj ./PricingService.Api/
@@ -17,13 +17,13 @@ RUN cd PricingService.Test && dotnet build
 
 FROM build AS test
 WORKDIR /src/PricingService.Test
-RUN dotnet test --verbosity:normal
+RUN dotnet test --verbosity:normal --no-restore
 
 FROM build AS publish
 WORKDIR /src/PricingService
-RUN dotnet publish -c Release -o out
+RUN dotnet publish -c Release --no-restore -o out
 
-FROM microsoft/dotnet:2.1-aspnetcore-runtime AS final
+FROM mcr.microsoft.com/dotnet/core/runtime:3.0 AS runtime
 WORKDIR /app
 EXPOSE 55269
 EXPOSE 44392
